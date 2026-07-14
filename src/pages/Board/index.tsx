@@ -4,43 +4,59 @@ import { FaPlus } from "react-icons/fa6";
 import AddTaskModal from "../../components/board/AddTaskModal";
 import TaskBoard from "../../components/board/TaskBoard";
 
-import { tasks } from "../../data/tasks";
+import useApp from "../../contexts/useApp";
+
+import type { Task } from "../../data/tasks";
 
 function Board() {
-  const [showModal, setShowModal] = useState(false);
+  const { tasks, setTasks } = useApp();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  function handleAddTask(task: Task) {
+    setTasks((previousTasks) => [task, ...previousTasks]);
+  }
+
+  function handleDeleteTask(id: number) {
+    setTasks((previousTasks) => previousTasks.filter((task) => task.id !== id));
+  }
 
   return (
-    <>
-      <div className="space-y-8">
-        {/* Header */}
+    <div className="space-y-8">
+      {/* Header */}
 
-        <section className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-white">Kanban Board</h1>
+      <section className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white">Kanban Board</h1>
 
-            <p className="mt-2 text-slate-400">
-              Organize your work and track progress across every stage.
-            </p>
-          </div>
+          <p className="mt-2 text-slate-400">
+            Organize, prioritize and track your team's work.
+          </p>
+        </div>
 
-          <button
-            type="button"
-            onClick={() => setShowModal(true)}
-            className="inline-flex items-center gap-3 rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
-          >
-            <FaPlus />
+        <button
+          type="button"
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center gap-3 rounded-xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700"
+        >
+          <FaPlus />
 
-            <span>New Task</span>
-          </button>
-        </section>
+          <span>Add Task</span>
+        </button>
+      </section>
 
-        {/* Board */}
+      {/* Task Board */}
 
-        <TaskBoard tasks={tasks} />
-      </div>
+      <TaskBoard tasks={tasks} onDelete={handleDeleteTask} />
 
-      <AddTaskModal open={showModal} onClose={() => setShowModal(false)} />
-    </>
+      {/* Modal */}
+
+      <AddTaskModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAddTask={handleAddTask}
+      />
+    </div>
   );
 }
 

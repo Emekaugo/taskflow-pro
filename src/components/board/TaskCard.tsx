@@ -1,65 +1,75 @@
-import { FaCalendarDays, FaCircleUser, FaFlag } from "react-icons/fa6";
+import { FaCalendarDays, FaTrash, FaUser } from "react-icons/fa6";
+
+import type { Task } from "../../data/tasks";
 
 import TaskStatusBadge from "./TaskStatusBadge";
-import type { Task } from "../../data/tasks";
 
 interface TaskCardProps {
   task: Task;
+  onDelete: (id: number) => void;
 }
 
-const priorityStyles = {
-  Low: "text-emerald-400",
-  Medium: "text-amber-400",
-  High: "text-red-400",
-};
+function TaskCard({ task, onDelete }: TaskCardProps) {
+  const priorityStyles = {
+    Low: "text-emerald-400 bg-emerald-500/10",
+    Medium: "text-amber-400 bg-amber-500/10",
+    High: "text-red-400 bg-red-500/10",
+  };
 
-function TaskCard({ task }: TaskCardProps) {
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-blue-500 hover:shadow-xl">
+    <article className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-blue-500 hover:shadow-lg">
       {/* Header */}
 
-      <div className="flex items-start justify-between gap-3">
-        <h3 className="flex-1 text-lg font-semibold text-white">
-          {task.title}
-        </h3>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-lg font-semibold text-white">{task.title}</h3>
 
-        <TaskStatusBadge status={task.status} />
+          <p className="mt-2 text-sm leading-6 text-slate-400">
+            {task.description}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => onDelete(task.id)}
+          className="rounded-lg p-2 text-red-400 transition hover:bg-red-500 hover:text-white"
+        >
+          <FaTrash />
+        </button>
       </div>
 
-      {/* Description */}
+      {/* Status & Priority */}
 
-      <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-400">
-        {task.description}
-      </p>
-
-      {/* Priority */}
-
-      <div className="mt-5 flex items-center gap-2">
-        <FaFlag className={priorityStyles[task.priority]} />
+      <div className="mt-5 flex items-center justify-between">
+        <TaskStatusBadge status={task.status} />
 
         <span
-          className={`text-sm font-medium ${priorityStyles[task.priority]}`}
+          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+            priorityStyles[task.priority]
+          }`}
         >
-          {task.priority} Priority
+          {task.priority}
         </span>
       </div>
 
       {/* Footer */}
 
-      <div className="mt-6 flex items-center justify-between border-t border-slate-800 pt-4">
-        <div className="flex items-center gap-2 text-sm text-slate-400">
-          <FaCircleUser />
+      <div className="mt-6 border-t border-slate-800 pt-4">
+        <div className="flex items-center justify-between text-sm text-slate-400">
+          <div className="flex items-center gap-2">
+            <FaUser className="text-blue-400" />
 
-          <span>{task.assignee}</span>
-        </div>
+            <span>{task.assignee}</span>
+          </div>
 
-        <div className="flex items-center gap-2 text-sm text-slate-400">
-          <FaCalendarDays />
+          <div className="flex items-center gap-2">
+            <FaCalendarDays className="text-amber-400" />
 
-          <span>{task.dueDate}</span>
+            <span>{task.dueDate}</span>
+          </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
 

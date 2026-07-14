@@ -1,34 +1,34 @@
 import {
-  FaChartLine,
-  FaFolderOpen,
+  FaCalendarDays,
+  FaFolder,
   FaListCheck,
   FaUsers,
 } from "react-icons/fa6";
+
 import QuickActions from "../../components/dashboard/QuickActions";
 import RecentActivity from "../../components/dashboard/RecentActivity";
 import StatCard from "../../components/dashboard/StatCard";
-import { dashboardStats } from "../../data/dashboard";
+
+import { getDashboardStats, getRecentActivity } from "../../data/dashboard";
+import useApp from "../../contexts/useApp";
 
 function Dashboard() {
+  const { projects, tasks, members, events } = useApp();
+
+  const stats = getDashboardStats(projects, tasks, members, events);
+
+  const activities = getRecentActivity(tasks, projects);
+
   return (
     <div className="space-y-8">
-      {/* Page Header */}
+      {/* Header */}
 
-      <section className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+      <section>
+        <h1 className="text-3xl font-bold text-white">Dashboard</h1>
 
-          <p className="mt-2 text-slate-400">
-            Welcome back. Here's an overview of your workspace.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
-        >
-          + New Project
-        </button>
+        <p className="mt-2 text-slate-400">
+          Welcome back! Here's an overview of your workspace.
+        </p>
       </section>
 
       {/* Statistics */}
@@ -36,43 +36,39 @@ function Dashboard() {
       <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title="Projects"
-          value={dashboardStats.projects}
-          icon={FaFolderOpen}
-          color="blue"
+          value={stats.totalProjects}
+          icon={FaFolder}
+          color="text-blue-400"
         />
 
         <StatCard
           title="Tasks"
-          value={dashboardStats.tasks}
+          value={stats.totalTasks}
           icon={FaListCheck}
-          color="emerald"
+          color="text-emerald-400"
         />
 
         <StatCard
-          title="Completed"
-          value={dashboardStats.completed}
-          icon={FaChartLine}
-          color="amber"
-        />
-
-        <StatCard
-          title="Team Members"
-          value={dashboardStats.members}
+          title="Members"
+          value={stats.totalMembers}
           icon={FaUsers}
-          color="purple"
+          color="text-purple-400"
+        />
+
+        <StatCard
+          title="Events"
+          value={stats.upcomingEvents}
+          icon={FaCalendarDays}
+          color="text-amber-400"
         />
       </section>
 
       {/* Bottom Section */}
 
-      <section className="grid gap-6 xl:grid-cols-3">
-        <div className="xl:col-span-2">
-          <RecentActivity />
-        </div>
+      <section className="grid gap-8 xl:grid-cols-[2fr_1fr]">
+        <RecentActivity activities={activities} />
 
-        <div>
-          <QuickActions />
-        </div>
+        <QuickActions />
       </section>
     </div>
   );

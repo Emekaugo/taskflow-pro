@@ -1,52 +1,69 @@
 export interface CalendarEvent {
   id: number;
   title: string;
+  description: string;
   date: string;
   time: string;
-  type: "Meeting" | "Deadline" | "Review";
+  location: string;
 }
 
 export const calendarEvents: CalendarEvent[] = [
   {
     id: 1,
     title: "Sprint Planning",
-    date: "Sep 8",
-    time: "09:00 AM",
-    type: "Meeting",
+    description: "Plan tasks and priorities for the upcoming sprint.",
+    date: "2026-07-14",
+    time: "09:00",
+    location: "Meeting Room A",
   },
   {
     id: 2,
-    title: "UI Design Review",
-    date: "Sep 10",
-    time: "02:00 PM",
-    type: "Review",
+    title: "Client Presentation",
+    description: "Present the latest project progress to the client.",
+    date: "2026-07-16",
+    time: "14:00",
+    location: "Zoom",
   },
   {
     id: 3,
-    title: "Project Deadline",
-    date: "Sep 12",
-    time: "05:00 PM",
-    type: "Deadline",
+    title: "Design Review",
+    description: "Review the updated UI/UX designs with the product team.",
+    date: "2026-07-18",
+    time: "11:00",
+    location: "Design Studio",
   },
   {
     id: 4,
-    title: "Client Meeting",
-    date: "Sep 15",
-    time: "11:00 AM",
-    type: "Meeting",
+    title: "Backend Sync",
+    description: "Discuss API integration progress with backend developers.",
+    date: "2026-07-20",
+    time: "10:30",
+    location: "Conference Room B",
   },
   {
     id: 5,
-    title: "Backend Review",
-    date: "Sep 18",
-    time: "03:00 PM",
-    type: "Review",
-  },
-  {
-    id: 6,
-    title: "Release Deadline",
-    date: "Sep 20",
-    time: "06:00 PM",
-    type: "Deadline",
+    title: "Retrospective",
+    description: "Review the completed sprint and identify improvements.",
+    date: "2026-07-24",
+    time: "15:00",
+    location: "Meeting Room A",
   },
 ];
+
+export function sortEventsByDate(events: CalendarEvent[]) {
+  return [...events].sort((a, b) => {
+    const first = new Date(`${a.date}T${a.time}`).getTime();
+
+    const second = new Date(`${b.date}T${b.time}`).getTime();
+
+    return first - second;
+  });
+}
+
+export function getUpcomingEvents(events: CalendarEvent[], limit = 5) {
+  return sortEventsByDate(events).slice(0, limit);
+}
+
+export function filterEventsByDate(events: CalendarEvent[], date: string) {
+  return events.filter((event) => event.date === date);
+}
