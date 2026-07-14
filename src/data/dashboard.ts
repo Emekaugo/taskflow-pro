@@ -1,71 +1,50 @@
-export interface DashboardStats {
-  projects: number;
-  tasks: number;
-  completed: number;
-  members: number;
+import type { Project } from "./projects";
+import type { Task } from "./tasks";
+import type { TeamMember } from "./team";
+import type { CalendarEvent } from "./calendar";
+
+interface DashboardStats {
+  totalProjects: number;
+  totalTasks: number;
+  completedTasks: number;
+  pendingTasks: number;
+  totalMembers: number;
+  upcomingEvents: number;
 }
 
-export interface ActivityItem {
-  id: number;
-  title: string;
-  description: string;
-  time: string;
+export function getDashboardStats(
+  projects: Project[],
+  tasks: Task[],
+  members: TeamMember[],
+  events: CalendarEvent[],
+): DashboardStats {
+  return {
+    totalProjects: projects.length,
+
+    totalTasks: tasks.length,
+
+    completedTasks: tasks.filter((task) => task.status === "Done").length,
+
+    pendingTasks: tasks.filter((task) => task.status !== "Done").length,
+
+    totalMembers: members.length,
+
+    upcomingEvents: events.length,
+  };
 }
 
-export interface QuickAction {
-  id: number;
-  title: string;
-  description: string;
+export function getRecentActivity(tasks: Task[], projects: Project[]) {
+  const taskActivities = tasks.slice(0, 3).map((task) => ({
+    id: `task-${task.id}`,
+    title: `Task "${task.title}" updated`,
+    type: "Task",
+  }));
+
+  const projectActivities = projects.slice(0, 2).map((project) => ({
+    id: `project-${project.id}`,
+    title: `Project "${project.name}" active`,
+    type: "Project",
+  }));
+
+  return [...taskActivities, ...projectActivities];
 }
-
-export const dashboardStats: DashboardStats = {
-  projects: 8,
-  tasks: 42,
-  completed: 26,
-  members: 12,
-};
-
-export const recentActivities: ActivityItem[] = [
-  {
-    id: 1,
-    title: "Project Created",
-    description: "Website Redesign project was created.",
-    time: "10 minutes ago",
-  },
-  {
-    id: 2,
-    title: "Task Completed",
-    description: "Homepage UI task was marked as completed.",
-    time: "1 hour ago",
-  },
-  {
-    id: 3,
-    title: "Member Added",
-    description: "John Doe joined the Marketing workspace.",
-    time: "3 hours ago",
-  },
-  {
-    id: 4,
-    title: "Board Updated",
-    description: "Sprint Board was updated with new tasks.",
-    time: "Yesterday",
-  },
-];
-
-export const quickActions: QuickAction[] = [
-  {
-    id: 1,
-    title: "New Project",
-    description: "Create a brand new project.",
-  },
-  {
-    id: 2,
-    title: "New Task",
-    description: "Add a task to your workspace.",
-  },
-  {
-    id: 3,
-    title: "Invite Member",
-    description: "Add someone to your team.",
-  },
-];

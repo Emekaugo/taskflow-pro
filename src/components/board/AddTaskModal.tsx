@@ -1,39 +1,77 @@
-import { FaXmark } from "react-icons/fa6";
+import { useState } from "react";
+
+import type { Task, TaskStatus } from "../../data/tasks";
 
 interface AddTaskModalProps {
-  open: boolean;
+  isOpen: boolean;
   onClose: () => void;
+  onAddTask: (task: Task) => void;
 }
 
-function AddTaskModal({ open, onClose }: AddTaskModalProps) {
-  if (!open) return null;
+function AddTaskModal({ isOpen, onClose, onAddTask }: AddTaskModalProps) {
+  const [title, setTitle] = useState("");
+
+  const [description, setDescription] = useState("");
+
+  const [assignee, setAssignee] = useState("");
+
+  const [priority, setPriority] = useState<"Low" | "Medium" | "High">("Medium");
+
+  const [status, setStatus] = useState<TaskStatus>("Todo");
+
+  const [dueDate, setDueDate] = useState("");
+
+  if (!isOpen) {
+    return null;
+  }
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!title.trim() || !description.trim() || !assignee.trim() || !dueDate) {
+      return;
+    }
+
+    const newTask: Task = {
+      id: Date.now(),
+      title,
+      description,
+      assignee,
+      priority,
+      status,
+      dueDate,
+    };
+
+    onAddTask(newTask);
+
+    setTitle("");
+    setDescription("");
+    setAssignee("");
+    setPriority("Medium");
+    setStatus("Todo");
+    setDueDate("");
+
+    onClose();
+  }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6 backdrop-blur-sm">
-      <div className="w-full max-w-2xl rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+      <div className="w-full max-w-xl rounded-2xl border border-slate-800 bg-slate-900 p-8">
         {/* Header */}
 
-        <div className="flex items-center justify-between border-b border-slate-800 px-6 py-5">
-          <div>
-            <h2 className="text-2xl font-bold text-white">Add New Task</h2>
-
-            <p className="mt-1 text-sm text-slate-400">
-              Create a task for your project board.
-            </p>
-          </div>
+        <div className="mb-8 flex items-center justify-between">
+          <h2 className="text-2xl font-semibold text-white">Add New Task</h2>
 
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-800 hover:text-white"
+            className="text-2xl text-slate-400 transition hover:text-white"
           >
-            <FaXmark className="text-xl" />
+            ×
           </button>
         </div>
 
-        {/* Body */}
-
-        <div className="space-y-6 p-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-300">
               Task Title
@@ -41,8 +79,10 @@ function AddTaskModal({ open, onClose }: AddTaskModalProps) {
 
             <input
               type="text"
-              placeholder="Enter task title..."
-              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-blue-500"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder="Enter task title"
+              className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-blue-500"
             />
           </div>
 
@@ -53,36 +93,11 @@ function AddTaskModal({ open, onClose }: AddTaskModalProps) {
 
             <textarea
               rows={4}
-              placeholder="Describe the task..."
-              className="w-full resize-none rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-blue-500"
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              placeholder="Task description..."
+              className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-blue-500"
             />
-          </div>
-
-          <div className="grid gap-5 md:grid-cols-2">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-300">
-                Status
-              </label>
-
-              <select className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-blue-500">
-                <option>To Do</option>
-                <option>In Progress</option>
-                <option>Review</option>
-                <option>Done</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-300">
-                Priority
-              </label>
-
-              <select className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-blue-500">
-                <option>Low</option>
-                <option>Medium</option>
-                <option>High</option>
-              </select>
-            </div>
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
@@ -93,8 +108,10 @@ function AddTaskModal({ open, onClose }: AddTaskModalProps) {
 
               <input
                 type="text"
+                value={assignee}
+                onChange={(event) => setAssignee(event.target.value)}
                 placeholder="Assign to..."
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-blue-500"
               />
             </div>
 
@@ -105,30 +122,68 @@ function AddTaskModal({ open, onClose }: AddTaskModalProps) {
 
               <input
                 type="date"
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-blue-500"
+                value={dueDate}
+                onChange={(event) => setDueDate(event.target.value)}
+                className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-blue-500"
               />
             </div>
           </div>
-        </div>
 
-        {/* Footer */}
+          <div className="grid gap-5 md:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-300">
+                Priority
+              </label>
 
-        <div className="flex justify-end gap-4 border-t border-slate-800 px-6 py-5">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-xl border border-slate-700 px-5 py-3 font-medium text-slate-300 transition hover:bg-slate-800"
-          >
-            Cancel
-          </button>
+              <select
+                value={priority}
+                onChange={(event) =>
+                  setPriority(event.target.value as "Low" | "Medium" | "High")
+                }
+                className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-blue-500"
+              >
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
+              </select>
+            </div>
 
-          <button
-            type="button"
-            className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
-          >
-            Create Task
-          </button>
-        </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-300">
+                Status
+              </label>
+
+              <select
+                value={status}
+                onChange={(event) =>
+                  setStatus(event.target.value as TaskStatus)
+                }
+                className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-blue-500"
+              >
+                <option>Todo</option>
+                <option>In Progress</option>
+                <option>Done</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-4 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-xl border border-slate-700 px-6 py-3 text-white transition hover:bg-slate-800"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              className="rounded-xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700"
+            >
+              Add Task
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

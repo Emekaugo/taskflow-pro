@@ -1,77 +1,91 @@
 import { useMemo, useState } from "react";
+import { FaPlus } from "react-icons/fa6";
 
-import { projects } from "../../data/projects";
+import {
+  filterProjectsByStatus,
+  searchProjects,
+  type Project,
+  type ProjectStatus,
+} from "../../data/projects";
 import ProjectGrid from "../../components/project/ProjectGrid";
 import ProjectSearch from "../../components/project/ProjectSearch";
+import useApp from "../../contexts/useApp";
 
 function Projects() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const { projects, setProjects } = useApp();
 
-  const [statusFilter, setStatusFilter] = useState<
-    "All" | "Active" | "Completed" | "On Hold"
-  >("All");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [selectedStatus, setSelectedStatus] = useState<"All" | ProjectStatus>(
+    "All",
+  );
 
   const filteredProjects = useMemo(() => {
-    return projects.filter((project) => {
-      const matchesSearch =
-        project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const searchedProjects = searchProjects(projects, searchQuery);
 
-      const matchesStatus =
-        statusFilter === "All" || project.status === statusFilter;
+    return filterProjectsByStatus(searchedProjects, selectedStatus);
+  }, [projects, searchQuery, selectedStatus]);
 
-      return matchesSearch && matchesStatus;
-    });
-  }, [searchTerm, statusFilter]);
+  function handleDeleteProject(id: number) {
+    setProjects((previousProjects) =>
+      previousProjects.filter((project: { id: number }) => project.id !== id),
+    );
+  }
+
+  function handleAddProject() {
+    const newProject: Project = {
+      id: Date.now(),
+
+      name: `New Project ${projects.length + 1}`,
+
+      description: "New project created from the Projects page.",
+
+      status: "Planning",
+
+      dueDate: new Date().toISOString().split("T")[0],
+
+      members: 1,
+    };
+
+    setProjects((previousProjects) => [newProject, ...previousProjects]);
+  }
 
   return (
     <div className="space-y-8">
       {/* Header */}
 
-      <section className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
+      <section className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white">Projects</h1>
 
           <p className="mt-2 text-slate-400">
-            Manage all your projects in one place.
+            Manage all your active projects in one place.
           </p>
         </div>
 
         <button
           type="button"
-          className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
+          onClick={handleAddProject}
+          className="flex items-center gap-3 rounded-xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700"
         >
-          + New Project
+          <FaPlus />
+
+          <span>New Project</span>
         </button>
       </section>
 
-      {/* Search + Filter */}
+      {/* Search */}
 
-      <section className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-        <ProjectSearch value={searchTerm} onChange={setSearchTerm} />
-
-        <select
-          value={statusFilter}
-          onChange={(event) =>
-            setStatusFilter(
-              event.target.value as "All" | "Active" | "Completed" | "On Hold",
-            )
-          }
-          className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-blue-500"
-        >
-          <option value="All">All Projects</option>
-
-          <option value="Active">Active</option>
-
-          <option value="Completed">Completed</option>
-
-          <option value="On Hold">On Hold</option>
-        </select>
-      </section>
+      <ProjectSearch
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        selectedStatus={selectedStatus}
+        onStatusChange={setSelectedStatus}
+      />
 
       {/* Grid */}
 
-      <ProjectGrid projects={filteredProjects} />
+      <ProjectGrid projects={filteredProjects} onDelete={handleDeleteProject} />
     </div>
   );
 }

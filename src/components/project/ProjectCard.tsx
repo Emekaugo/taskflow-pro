@@ -1,4 +1,4 @@
-import { FaArrowRight, FaListCheck, FaUsers } from "react-icons/fa6";
+import { FaCalendarDays, FaTrash, FaUsers } from "react-icons/fa6";
 
 import type { Project } from "../../data/projects";
 
@@ -6,72 +6,55 @@ import ProjectStatusBadge from "./ProjectStatusBadge";
 
 interface ProjectCardProps {
   project: Project;
+  onDelete: (id: number) => void;
 }
 
-function ProjectCard({ project }: ProjectCardProps) {
+function ProjectCard({ project, onDelete }: ProjectCardProps) {
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 transition-all duration-200 hover:-translate-y-1 hover:border-blue-500 hover:shadow-xl">
-      {/* Header */}
+    <article className="flex h-full flex-col justify-between rounded-2xl border border-slate-800 bg-slate-900 p-6 transition-all duration-200 hover:-translate-y-1 hover:border-blue-500 hover:shadow-lg">
+      {/* Top */}
 
-      <div className="flex items-start justify-between">
-        <div>
-          <h3 className="text-xl font-semibold text-white">{project.name}</h3>
+      <div>
+        <div className="flex items-start justify-between gap-4">
+          <h2 className="text-xl font-semibold text-white">{project.name}</h2>
 
-          <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-400">
-            {project.description}
-          </p>
+          <ProjectStatusBadge status={project.status} />
         </div>
 
-        <ProjectStatusBadge status={project.status} />
+        <p className="mt-4 leading-7 text-slate-400">{project.description}</p>
       </div>
 
-      {/* Progress */}
+      {/* Bottom */}
 
-      <div className="mt-6">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="text-sm text-slate-400">Progress</span>
+      <div className="mt-8 border-t border-slate-800 pt-5">
+        <div className="flex items-center justify-between">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-sm text-slate-400">
+              <FaCalendarDays className="text-blue-400" />
 
-          <span className="text-sm font-semibold text-white">
-            {project.progress}%
-          </span>
-        </div>
+              <span>{project.dueDate}</span>
+            </div>
 
-        <div className="h-2 overflow-hidden rounded-full bg-slate-800">
-          <div
-            className="h-full rounded-full bg-blue-500 transition-all duration-300"
-            style={{
-              width: `${project.progress}%`,
-            }}
-          />
-        </div>
-      </div>
+            <div className="flex items-center gap-2 text-sm text-slate-400">
+              <FaUsers className="text-emerald-400" />
 
-      {/* Footer */}
-
-      <div className="mt-6 flex items-center justify-between border-t border-slate-800 pt-5">
-        <div className="flex items-center gap-5">
-          <div className="flex items-center gap-2 text-sm text-slate-400">
-            <FaUsers />
-
-            <span>{project.members}</span>
+              <span>
+                {project.members} Team Member
+                {project.members !== 1 ? "s" : ""}
+              </span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 text-sm text-slate-400">
-            <FaListCheck />
-
-            <span>{project.tasks}</span>
-          </div>
+          <button
+            type="button"
+            onClick={() => onDelete(project.id)}
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 transition hover:border-red-500 hover:bg-red-500 hover:text-white"
+          >
+            <FaTrash />
+          </button>
         </div>
-
-        <button
-          type="button"
-          className="flex items-center gap-2 text-sm font-medium text-blue-400 transition hover:text-blue-300"
-        >
-          View
-          <FaArrowRight className="text-xs" />
-        </button>
       </div>
-    </div>
+    </article>
   );
 }
 

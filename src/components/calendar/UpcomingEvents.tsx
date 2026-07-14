@@ -4,39 +4,39 @@ import EventCard from "./EventCard";
 
 interface UpcomingEventsProps {
   events: CalendarEvent[];
+  onDelete: (id: number) => void;
 }
 
-function UpcomingEvents({ events }: UpcomingEventsProps) {
+function UpcomingEvents({ events, onDelete }: UpcomingEventsProps) {
   if (events.length === 0) {
     return (
-      <div className="flex h-64 items-center justify-center rounded-2xl border border-dashed border-slate-700 bg-slate-900">
-        <div className="text-center">
-          <h3 className="text-xl font-semibold text-white">
-            No Upcoming Events
-          </h3>
+      <section className="rounded-2xl border border-slate-800 bg-slate-900 p-8">
+        <h2 className="text-2xl font-semibold text-white">Upcoming Events</h2>
 
-          <p className="mt-2 text-slate-400">Your schedule is clear.</p>
+        <div className="mt-8 flex h-48 items-center justify-center rounded-xl border border-dashed border-slate-700">
+          <p className="text-slate-500">No upcoming events scheduled.</p>
         </div>
-      </div>
+      </section>
     );
   }
 
   return (
-    <section className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold text-white">Upcoming Events</h2>
+    <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+      {/* Header */}
 
-          <p className="mt-1 text-sm text-slate-400">
-            {events.length} upcoming event
-            {events.length !== 1 ? "s" : ""}
-          </p>
-        </div>
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-2xl font-semibold text-white">Upcoming Events</h2>
+
+        <span className="rounded-full bg-blue-600 px-3 py-1 text-sm font-medium text-white">
+          {events.length}
+        </span>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
+      {/* Events */}
+
+      <div className="space-y-5">
         {events.map((event) => (
-          <EventCard key={event.id} event={event} />
+          <EventCard key={event.id} event={event} onDelete={onDelete} />
         ))}
       </div>
     </section>
