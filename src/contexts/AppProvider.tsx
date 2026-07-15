@@ -8,6 +8,7 @@ import { projects } from "../data/projects";
 import { tasks } from "../data/tasks";
 import { calendarEvents } from "../data/calendar";
 import { teamMembers } from "../data/team";
+import { defaultSettings } from "../data/settings";
 
 interface AppProviderProps {
   children: ReactNode;
@@ -21,6 +22,8 @@ function AppProvider({ children }: AppProviderProps) {
   const [eventList, setEvents] = useLocalStorage("events", calendarEvents);
 
   const [memberList, setMembers] = useLocalStorage("members", teamMembers);
+
+  const [settings, setSettings] = useLocalStorage("settings", defaultSettings);
 
   return (
     <AppContext.Provider
@@ -36,6 +39,9 @@ function AppProvider({ children }: AppProviderProps) {
 
         members: memberList,
         setMembers,
+
+        settings,
+        setSettings,
       }}
     >
       {children}

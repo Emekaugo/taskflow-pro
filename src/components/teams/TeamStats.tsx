@@ -1,71 +1,70 @@
-import { FaUsers, FaCode, FaPalette, FaUserTie } from "react-icons/fa6";
+import {
+  FaCode,
+  FaLayerGroup,
+  FaPeopleGroup,
+  FaUserTie,
+} from "react-icons/fa6";
+
+import { getTeamStatistics, type TeamMember } from "../../data/team";
 
 interface TeamStatsProps {
-  totalMembers: number;
-  developers: number;
-  designers: number;
-  managers: number;
+  members: TeamMember[];
 }
 
-function TeamStats({
-  totalMembers,
-  developers,
-  designers,
-  managers,
-}: TeamStatsProps) {
-  const stats = [
+function TeamStats({ members }: TeamStatsProps) {
+  const stats = getTeamStatistics(members);
+
+  const cards = [
     {
       title: "Total Members",
-      value: totalMembers,
-      icon: FaUsers,
+      value: stats.total,
+      icon: FaPeopleGroup,
       color: "text-blue-400",
     },
     {
-      title: "Developers",
-      value: developers,
+      title: "Frontend",
+      value: stats.frontend,
       icon: FaCode,
       color: "text-emerald-400",
     },
     {
-      title: "Designers",
-      value: designers,
-      icon: FaPalette,
-      color: "text-purple-400",
+      title: "Backend",
+      value: stats.backend,
+      icon: FaLayerGroup,
+      color: "text-amber-400",
     },
     {
       title: "Managers",
-      value: managers,
+      value: stats.managers,
       icon: FaUserTie,
-      color: "text-amber-400",
+      color: "text-violet-400",
     },
   ];
 
   return (
     <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-      {stats.map((stat) => {
-        const Icon = stat.icon;
+      {cards.map((card) => {
+        const Icon = card.icon;
 
         return (
-          <div
-            key={stat.title}
-            className="rounded-2xl border border-slate-800 bg-slate-900 p-6 transition-all duration-200 hover:border-blue-500 hover:shadow-lg"
+          <article
+            key={card.title}
+            className="rounded-2xl border border-slate-800 bg-slate-900 p-6"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm uppercase tracking-wide text-slate-400">
-                  {stat.title}
-                </p>
+                <p className="text-sm text-slate-400">{card.title}</p>
 
-                <h2 className="mt-3 text-4xl font-bold text-white">
-                  {stat.value}
+                <h2 className="mt-3 text-3xl font-bold text-white">
+                  {card.value}
                 </h2>
               </div>
 
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-800">
-                <Icon className={`text-2xl ${stat.color}`} />
+              <div className={`rounded-xl bg-slate-800 p-4 ${card.color}`}>
+                <Icon className="text-xl" />
               </div>
             </div>
-          </div>
+          </article>
         );
       })}
     </section>
