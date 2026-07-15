@@ -1,89 +1,94 @@
-export type MemberStatus = "Online" | "Away" | "Offline";
+export type TeamRole =
+  | "Frontend Developer"
+  | "Backend Developer"
+  | "UI/UX Designer"
+  | "Project Manager";
 
 export interface TeamMember {
   id: number;
   name: string;
-  role: string;
-  department: string;
   email: string;
-  status: MemberStatus;
+  role: TeamRole;
+  department: string;
 }
 
 export const teamMembers: TeamMember[] = [
   {
     id: 1,
     name: "Chukwuemeka Ugochukwu",
+    email: "emeka@example.com",
     role: "Frontend Developer",
     department: "Engineering",
-    email: "emeka@example.com",
-    status: "Online",
   },
   {
     id: 2,
     name: "Sarah Johnson",
+    email: "sarah@example.com",
     role: "UI/UX Designer",
     department: "Design",
-    email: "sarah@example.com",
-    status: "Away",
   },
   {
     id: 3,
-    name: "David Smith",
+    name: "Daniel Wilson",
+    email: "daniel@example.com",
     role: "Backend Developer",
     department: "Engineering",
-    email: "david@example.com",
-    status: "Online",
   },
   {
     id: 4,
-    name: "Michael Brown",
+    name: "Grace Smith",
+    email: "grace@example.com",
     role: "Project Manager",
     department: "Management",
-    email: "michael@example.com",
-    status: "Online",
   },
   {
     id: 5,
-    name: "Sophia Wilson",
-    role: "QA Engineer",
-    department: "Quality Assurance",
-    email: "sophia@example.com",
-    status: "Offline",
-  },
-  {
-    id: 6,
-    name: "James Taylor",
-    role: "DevOps Engineer",
-    department: "Infrastructure",
-    email: "james@example.com",
-    status: "Away",
-  },
-  {
-    id: 7,
-    name: "Emma Davis",
-    role: "Product Manager",
-    department: "Product",
-    email: "emma@example.com",
-    status: "Online",
-  },
-  {
-    id: 8,
-    name: "Daniel Anderson",
-    role: "Mobile Developer",
+    name: "Michael Brown",
+    email: "michael@example.com",
+    role: "Frontend Developer",
     department: "Engineering",
-    email: "daniel@example.com",
-    status: "Offline",
   },
 ];
 
-export const teamStats = {
-  totalMembers: teamMembers.length,
-  developers: teamMembers.filter((member) =>
-    member.role.toLowerCase().includes("developer"),
-  ).length,
-  designers: teamMembers.filter((member) => member.department === "Design")
-    .length,
-  managers: teamMembers.filter((member) =>
-    member.role.toLowerCase().includes("manager"),
-  ).length,
-};
+export function searchMembers(members: TeamMember[], query: string) {
+  if (!query.trim()) {
+    return members;
+  }
+
+  const search = query.toLowerCase();
+
+  return members.filter(
+    (member) =>
+      member.name.toLowerCase().includes(search) ||
+      member.email.toLowerCase().includes(search),
+  );
+}
+
+export function filterMembersByRole(
+  members: TeamMember[],
+  role: TeamRole | "All",
+) {
+  if (role === "All") {
+    return members;
+  }
+
+  return members.filter((member) => member.role === role);
+}
+
+export function getTeamStatistics(members: TeamMember[]) {
+  return {
+    total: members.length,
+
+    frontend: members.filter((member) => member.role === "Frontend Developer")
+      .length,
+
+    backend: members.filter((member) => member.role === "Backend Developer")
+      .length,
+
+    designers: members.filter((member) => member.role === "UI/UX Designer")
+      .length,
+
+    managers: members.filter((member) => member.role === "Project Manager")
+      .length,
+  };
+}

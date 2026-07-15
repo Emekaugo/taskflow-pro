@@ -2,6 +2,7 @@ import type { Project } from "../data/projects";
 import type { Task } from "../data/tasks";
 import type { CalendarEvent } from "../data/calendar";
 import type { TeamMember } from "../data/team";
+import type { AppSettings } from "../data/settings";
 
 export interface AppContextType {
   projects: Project[];
@@ -15,4 +16,7 @@ export interface AppContextType {
 
   members: TeamMember[];
   setMembers: React.Dispatch<React.SetStateAction<TeamMember[]>>;
+
+  settings: AppSettings;
+  setSettings: React.Dispatch<React.SetStateAction<AppSettings>>;
 }

@@ -1,27 +1,31 @@
-import { FaCircleUser } from "react-icons/fa6";
+import useApp from "../../contexts/useApp";
 
 function ProfileSettings() {
+  const { settings, setSettings } = useApp();
+
+  function updateProfile(field: "name" | "email" | "jobTitle", value: string) {
+    setSettings((previousSettings) => ({
+      ...previousSettings,
+
+      profile: {
+        ...previousSettings.profile,
+
+        [field]: value,
+      },
+    }));
+  }
+
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900 p-8">
-      {/* Header */}
+    <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+      <div className="mb-8">
+        <h2 className="text-2xl font-semibold text-white">Profile Settings</h2>
 
-      <div className="flex items-center gap-5">
-        <FaCircleUser className="text-7xl text-slate-300" />
-
-        <div>
-          <h2 className="text-2xl font-semibold text-white">
-            Profile Settings
-          </h2>
-
-          <p className="mt-1 text-slate-400">
-            Update your personal information.
-          </p>
-        </div>
+        <p className="mt-2 text-slate-400">Update your personal information.</p>
       </div>
 
-      {/* Form */}
+      <div className="space-y-6">
+        {/* Name */}
 
-      <div className="mt-8 grid gap-6 md:grid-cols-2">
         <div>
           <label className="mb-2 block text-sm font-medium text-slate-300">
             Full Name
@@ -29,10 +33,13 @@ function ProfileSettings() {
 
           <input
             type="text"
-            defaultValue="Chukwuemeka Ugochukwu"
+            value={settings.profile.name}
+            onChange={(event) => updateProfile("name", event.target.value)}
             className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-blue-500"
           />
         </div>
+
+        {/* Email */}
 
         <div>
           <label className="mb-2 block text-sm font-medium text-slate-300">
@@ -41,10 +48,13 @@ function ProfileSettings() {
 
           <input
             type="email"
-            defaultValue="emeka@example.com"
+            value={settings.profile.email}
+            onChange={(event) => updateProfile("email", event.target.value)}
             className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-blue-500"
           />
         </div>
+
+        {/* Job Title */}
 
         <div>
           <label className="mb-2 block text-sm font-medium text-slate-300">
@@ -53,47 +63,11 @@ function ProfileSettings() {
 
           <input
             type="text"
-            defaultValue="Frontend Developer"
+            value={settings.profile.jobTitle}
+            onChange={(event) => updateProfile("jobTitle", event.target.value)}
             className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-blue-500"
           />
         </div>
-
-        <div>
-          <label className="mb-2 block text-sm font-medium text-slate-300">
-            Company
-          </label>
-
-          <input
-            type="text"
-            defaultValue="TaskFlow Pro"
-            className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-blue-500"
-          />
-        </div>
-      </div>
-
-      {/* Bio */}
-
-      <div className="mt-6">
-        <label className="mb-2 block text-sm font-medium text-slate-300">
-          Bio
-        </label>
-
-        <textarea
-          rows={4}
-          defaultValue="Frontend Developer passionate about building scalable web applications using React and TypeScript."
-          className="w-full resize-none rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-blue-500"
-        />
-      </div>
-
-      {/* Action */}
-
-      <div className="mt-8 flex justify-end">
-        <button
-          type="button"
-          className="rounded-xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700"
-        >
-          Save Changes
-        </button>
       </div>
     </section>
   );
