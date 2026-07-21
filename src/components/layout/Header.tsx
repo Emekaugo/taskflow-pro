@@ -1,6 +1,29 @@
-import { FaBell, FaCircleUser, FaMagnifyingGlass } from "react-icons/fa6";
+import { FaBell, FaMagnifyingGlass, FaRightFromBracket } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
+
+import useAuth from "../../contexts/useAuth";
 
 function Header() {
+  const { currentUser, logout } = useAuth();
+
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+
+    navigate("/login", {
+      replace: true,
+    });
+  }
+
+  const initials =
+    currentUser?.name
+      ?.split(" ")
+      .map((word) => word[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() ?? "U";
+
   return (
     <header className="flex h-20 items-center justify-between border-b border-slate-800 bg-slate-900 px-10">
       {/* Search */}
@@ -20,20 +43,36 @@ function Header() {
       <div className="flex items-center gap-8">
         <button
           type="button"
-          className="text-xl text-slate-400 hover:text-white"
+          className="text-xl text-slate-400 transition hover:text-white"
         >
           <FaBell />
         </button>
 
-        <div className="flex items-center gap-3">
-          <FaCircleUser className="text-4xl text-slate-300" />
+        {/* User */}
+
+        <div className="flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
+            {initials}
+          </div>
 
           <div>
-            <p className="font-semibold text-white">Chukwuemeka</p>
+            <p className="font-semibold text-white">{currentUser?.name}</p>
 
-            <p className="text-sm text-slate-400">Software Engineer</p>
+            <p className="text-sm text-slate-400">{currentUser?.email}</p>
           </div>
         </div>
+
+        {/* Logout */}
+
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-300 transition hover:border-red-500 hover:text-red-400"
+        >
+          <FaRightFromBracket />
+
+          <span>Logout</span>
+        </button>
       </div>
     </header>
   );
