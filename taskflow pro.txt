@@ -1,0 +1,36 @@
+taskflow pro
+PHASE 3
+──────────────
+Batch 1 Authentication
+Batch 2 API Layer
+Batch 3 Dashboard Analytics
+
+Batch 4 Drag & Drop
+Batch 5 Calendar Improvements
+Batch 6 Responsive Design
+Batch 7 UX Improvements
+Batch 8 Production Polish
+
+
+///////////////////////////////////////////////////////////////////////
+login:
+Email:
+demo@taskflow.com
+
+Password:
+password123
+/////////////////////////////////////////////////////////////
+register:
+Name:
+Emeka
+
+Email:
+emeka@gmail.com
+
+Password:
+password123
+
+✅ Deploy TaskFlow Pro.
+✅ Add it to your portfolio and CV.
+✅ Create feature/dashboard-analytics.
+✅ Begin the next phase.
