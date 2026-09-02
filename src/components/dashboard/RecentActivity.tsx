@@ -1,53 +1,68 @@
-interface Activity {
-  id: string;
-  title: string;
-  type: string;
-}
+import {
+  FaCalendarDays,
+  FaClipboardCheck,
+  FaDiagramProject,
+  FaUsers,
+} from "react-icons/fa6";
 
-interface RecentActivityProps {
-  activities: Activity[];
-}
+import { recentActivities } from "../../data/analytics";
 
-function RecentActivity({ activities }: RecentActivityProps) {
+const activityIcons = {
+  project: FaDiagramProject,
+
+  task: FaClipboardCheck,
+
+  calendar: FaCalendarDays,
+
+  team: FaUsers,
+};
+
+const activityColors = {
+  project: "text-blue-400",
+
+  task: "text-emerald-400",
+
+  calendar: "text-amber-400",
+
+  team: "text-purple-400",
+};
+
+function RecentActivity() {
   return (
     <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-      {/* Header */}
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold text-white">Recent Activity</h2>
 
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold text-white">Recent Activity</h2>
-
-        <span className="text-sm text-slate-400">
-          {activities.length} item
-          {activities.length !== 1 ? "s" : ""}
-        </span>
+        <p className="mt-1 text-sm text-slate-400">
+          Latest updates across your workspace.
+        </p>
       </div>
 
-      {/* Empty State */}
+      <div className="space-y-5">
+        {recentActivities.map((activity) => {
+          const Icon = activityIcons[activity.type];
 
-      {activities.length === 0 ? (
-        <div className="flex h-40 items-center justify-center">
-          <p className="text-slate-500">No recent activity.</p>
-        </div>
-      ) : (
-        <div className="mt-6 space-y-4">
-          {activities.map((activity) => (
-            <div
-              key={activity.id}
-              className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950 p-4 transition hover:border-blue-500"
-            >
-              <div>
-                <h3 className="font-medium text-white">{activity.title}</h3>
-
-                <p className="mt-1 text-sm text-slate-400">{activity.type}</p>
+          return (
+            <div key={activity.id} className="flex items-start gap-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-800">
+                <Icon className={`text-lg ${activityColors[activity.type]}`} />
               </div>
 
-              <span className="rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
-                New
+              <div className="flex-1">
+                <h3 className="font-medium text-white">{activity.title}</h3>
+
+                <p className="mt-1 text-sm text-slate-400">
+                  {activity.description}
+                </p>
+              </div>
+
+              <span className="whitespace-nowrap text-xs text-slate-500">
+                {activity.time}
               </span>
             </div>
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
     </section>
   );
 }
