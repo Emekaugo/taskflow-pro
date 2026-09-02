@@ -50,20 +50,64 @@ export const calendarEvents: CalendarEvent[] = [
   },
 ];
 
+export function getEventDateTime(event: CalendarEvent) {
+  return new Date(`${event.date}T${event.time}`);
+}
+
 export function sortEventsByDate(events: CalendarEvent[]) {
   return [...events].sort((a, b) => {
-    const first = new Date(`${a.date}T${a.time}`).getTime();
-
-    const second = new Date(`${b.date}T${b.time}`).getTime();
-
-    return first - second;
+    return getEventDateTime(a).getTime() - getEventDateTime(b).getTime();
   });
 }
 
 export function getUpcomingEvents(events: CalendarEvent[], limit = 5) {
-  return sortEventsByDate(events).slice(0, limit);
+  const now = new Date();
+
+  return sortEventsByDate(events)
+    .filter((event) => getEventDateTime(event).getTime() >= now.getTime())
+    .slice(0, limit);
 }
 
 export function filterEventsByDate(events: CalendarEvent[], date: string) {
   return events.filter((event) => event.date === date);
+}
+
+export function formatEventDate(date: string) {
+  return new Date(`${date}T00:00:00`).toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+export function formatEventTime(time: string) {
+  return new Date(`1970-01-01T${time}`).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+export function isEventToday(date: string) {
+  const today = new Date();
+
+  const eventDate = new Date(`${date}T00:00:00`);
+
+  return (
+    today.getFullYear() === eventDate.getFullYear() &&
+    today.getMonth() === eventDate.getMonth() &&
+    today.getDate() === eventDate.getDate()
+  );
+}
+
+export function getEventsForMonth(
+  events: CalendarEvent[],
+  year: number,
+  month: number,
+) {
+  return events.filter((event) => {
+    const eventDate = new Date(`${event.date}T00:00:00`);
+
+    return eventDate.getFullYear() === year && eventDate.getMonth() === month;
+  });
 }

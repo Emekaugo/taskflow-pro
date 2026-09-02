@@ -1,81 +1,60 @@
-import {
-  filterTasksByStatus,
-  getTaskCounts,
-  type Task,
-} from "../../data/tasks";
+import type { TaskStatus } from "../../data/tasks";
+
+import useApp from "../../contexts/useApp";
 
 import BoardColumn from "./BoardColumn";
 
-interface TaskBoardProps {
-  tasks: Task[];
-  onDelete: (id: number) => void;
-}
+function TaskBoard() {
+  const { tasks, setTasks } = useApp();
 
-function TaskBoard({ tasks, onDelete }: TaskBoardProps) {
-  const counts = getTaskCounts(tasks);
+  function handleDeleteTask(id: number) {
+    setTasks((currentTasks) => currentTasks.filter((task) => task.id !== id));
+  }
 
-  const todoTasks = filterTasksByStatus(tasks, "Todo");
+  function handleDropTask(taskId: number, newStatus: TaskStatus) {
+    setTasks((currentTasks) =>
+      currentTasks.map((task) =>
+        task.id === taskId
+          ? {
+              ...task,
+              status: newStatus,
+            }
+          : task,
+      ),
+    );
+  }
 
-  const inProgressTasks = filterTasksByStatus(tasks, "In Progress");
+  const todoTasks = tasks.filter((task) => task.status === "Todo");
 
-  const completedTasks = filterTasksByStatus(tasks, "Done");
+  const inProgressTasks = tasks.filter((task) => task.status === "In Progress");
+
+  const doneTasks = tasks.filter((task) => task.status === "Done");
 
   return (
-    <div className="space-y-6">
-      {/* Summary */}
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <BoardColumn
+        title="Todo"
+        status="Todo"
+        tasks={todoTasks}
+        onDelete={handleDeleteTask}
+        onDropTask={handleDropTask}
+      />
 
-      <section className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
-          <p className="text-sm uppercase tracking-wide text-slate-400">Todo</p>
+      <BoardColumn
+        title="In Progress"
+        status="In Progress"
+        tasks={inProgressTasks}
+        onDelete={handleDeleteTask}
+        onDropTask={handleDropTask}
+      />
 
-          <h2 className="mt-2 text-3xl font-bold text-white">{counts.todo}</h2>
-        </div>
-
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
-          <p className="text-sm uppercase tracking-wide text-slate-400">
-            In Progress
-          </p>
-
-          <h2 className="mt-2 text-3xl font-bold text-blue-400">
-            {counts.inProgress}
-          </h2>
-        </div>
-
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
-          <p className="text-sm uppercase tracking-wide text-slate-400">
-            Completed
-          </p>
-
-          <h2 className="mt-2 text-3xl font-bold text-emerald-400">
-            {counts.done}
-          </h2>
-        </div>
-      </section>
-
-      {/* Kanban Board */}
-
-      <section className="grid gap-6 xl:grid-cols-3">
-        <BoardColumn
-          title="Todo"
-          status="Todo"
-          tasks={todoTasks}
-          onDelete={onDelete}
-        />
-
-        <BoardColumn
-          title="In Progress"
-          status="In Progress"
-          tasks={inProgressTasks}
-          onDelete={onDelete}
-        />
-
-        <BoardColumn
-          title="Done"
-          status="Done"
-          tasks={completedTasks}
-          onDelete={onDelete}
-        />
-      </section>
+      <BoardColumn
+        title="Done"
+        status="Done"
+        tasks={doneTasks}
+        onDelete={handleDeleteTask}
+        onDropTask={handleDropTask}
+      />
     </div>
   );
 }

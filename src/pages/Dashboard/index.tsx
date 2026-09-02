@@ -15,11 +15,7 @@ import TaskProgressChart from "../../components/dashboard/charts/TaskProgressCha
 import WeeklyProductivityChart from "../../components/dashboard/charts/WeeklyProductivityChart";
 
 import useSearch from "../../hooks/useSearch";
-
-import { projects } from "../../data/projects";
-import { tasks } from "../../data/tasks";
-import { teamMembers } from "../../data/team";
-import { calendarEvents } from "../../data/calendar";
+import useApp from "../../contexts/useApp";
 
 import {
   getRecentProjects,
@@ -29,6 +25,8 @@ import {
 } from "../../data/dashboard";
 
 function Dashboard() {
+  const { projects, tasks, events, members } = useApp();
+
   const [statusFilter, setStatusFilter] = useState("All");
 
   const {
@@ -122,13 +120,13 @@ function Dashboard() {
       <section className="grid gap-8 xl:grid-cols-2">
         <TodayTasks tasks={getTodayTasks(tasks)} />
 
-        <UpcomingDeadlines events={getUpcomingDeadlines(calendarEvents)} />
+        <UpcomingDeadlines events={getUpcomingDeadlines(events)} />
       </section>
 
       <section className="grid gap-8 xl:grid-cols-2">
         <RecentProjects projects={recentProjects} />
 
-        <TeamOverview members={getTeamOverview(teamMembers)} />
+        <TeamOverview members={getTeamOverview(members)} />
       </section>
 
       <section className="grid gap-8 xl:grid-cols-3">
